@@ -1,3 +1,22 @@
+//bouton +/- pour change la quantite produit
+.container_quantite {
+  padding-top: 5px;
+  width: 30vw;
+  display: flex;
+  justify-content: center;
+}
+
+.moins-btn,
+.plus-btn {
+  width: 10%;
+  border-radius: 0;
+  border: rgb(231, 231, 231) 1px solid;
+}
+
+.container_quantite input {
+  background: #7340ff;
+  width: 30%;
+}
 // bouton ajouter au panier
 #add-button {
   margin-top: 10px;

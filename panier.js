@@ -1,5 +1,5 @@
-//declaration variable où il y aura la key "produit" et les value du
-//produit convertisen obj JS  dans le LS
+//declaration variable où il y aura la key "produit" et les values du
+//produit convertis en obj JS  dans le LS
 let produitsEnregistres = JSON.parse(localStorage.getItem("produit"));
 
 /**************affichage des produits du LS dans le panier***********/
@@ -33,25 +33,43 @@ if (produitsEnregistres === null || produitsEnregistres == 0) {
     "
 >
   <h6 class="my-0">${produitsEnregistres[i].nomproduit}</h6>
+  <h6 class="my-0">${produitsEnregistres[i].optionproduit}</h6>
   <p class="affichage_prix">${produitsEnregistres[i].prix}€</p>
-  <input type ="number" class="quantite"  value="${produitsEnregistres[i].quantite}">
+  <input class="quantite" type="number" value="${produitsEnregistres[i].quantite}" min="1" onchange="updateQuantity(this.value)">
    <button class="btn_supprimer_article">
   <i class="fas fa-times"></i></button>
- 
-</li>`;
+</li>
+`;
     ul.innerHTML = output;
   }
-}
-/**********************modifier la quantité de produits************************
-function update_amounts() {
-  let sum = 0;
-  let inputQuantite = document.querySelector(".quantite");
-  console.log(inputQuantite);
+  //afficher le total dans une structure html & creation du bouton
+  let affichagePrixTotal = `
+<li id="total" class="list-group-item d-flex justify-content-between">
+</li>`;
+  //insertion dans la structure html et en dernière position
+  ul.insertAdjacentHTML("beforeend", affichagePrixTotal);
 }
 
-update_amounts();*/
+/***************** calcul du prix total ***************/
 
-/**********************supprimer produits*************************/
+//Fonction pour créer un prixTotal afin de l'utiliser pour afficher le prix total plus facillement dans la panier
+function calculPrixTotal() {
+  //integrer les prix dans le panier dans une variable qui est un tableau
+  let calculPrixTotal = 0;
+  //recuperer les prix du panier
+  for (let i in produitsEnregistres) {
+    calculPrixTotal += produitsEnregistres[i].prix;
+  }
+  localStorage.setItem("prixTotal", calculPrixTotal);
+  if (document.querySelector(".affichage_prix") != null) {
+    document.getElementById("total").innerHTML = `<strong>Total</strong>
+<strong>${calculPrixTotal} €</strong>`;
+  }
+}
+calculPrixTotal();
+
+/**********************supprimer produits********************/
+
 //recuperer l'icone croix qui servira à supprimer un produit
 let btnsupprimer = document.querySelectorAll(".btn_supprimer_article");
 let li = document.querySelector(".list-group-item");
@@ -61,8 +79,7 @@ for (let i = 0; i < btnsupprimer.length; i++) {
     event.preventDefault();
     // au clique du bouton, affichage de l'id du produit
     let idasupprimer = produitsEnregistres[i].idproduit;
-
-    //supprimer l'élément cliqué et garder les autres avce la methode filter
+    //supprimer l'élément cliqué et garder les autres avec la methode filter
     produitsEnregistres = produitsEnregistres.filter(
       (element) => element.idproduit !== idasupprimer
     );
@@ -74,16 +91,15 @@ for (let i = 0; i < btnsupprimer.length; i++) {
   });
 }
 
-/***************** creation du bouton "vider le panier"*************/
+/************* creation du bouton "vider le panier"*************/
+
 //creation du bouton
 let btnToutSuppHtml = `
 <button id="remove_all_button" class="primary" > Vider le panier</button>`;
 //insertion dans la structure html
 ul.insertAdjacentHTML("beforeend", btnToutSuppHtml);
-
 //recuperation du bouton
 let btnToutSuppPanier = document.getElementById("remove_all_button");
-
 //suppression de la key produit du LS pour supprimer entièrement le panier
 btnToutSuppPanier.addEventListener("click", (e) => {
   e.preventDefault();
@@ -94,31 +110,25 @@ btnToutSuppPanier.addEventListener("click", (e) => {
   window.location.href = "panier.html";
 });
 
-/***************** calcul du prix total ***************/
-//integrer les prix dans le panier dans une variable qui est un tableau
-let calculPrixTotal = [];
-
-//recuperer les prix du panier
-for (let i = 0; i < produitsEnregistres.length; i++) {
-  let prixCamerasPanier = produitsEnregistres[i].prix;
-  //mettre les prix dans un tableau pour pvr faire le calcul avec calculPrixTotal
-  calculPrixTotal.push(prixCamerasPanier);
+/**********************modifier la quantité de produits************************/
+//Fonction qui modifie la quantité directement sur la page du panier et mets à jour le prixTotal
+// Le changement de valeur de l'input va lancer la fonction updateQuantity()
+/*function updateQuantity() {
+  let selection = document.querySelector(".quantite").value;
+  console.log(selection);
+  let prixUpdate = document.querySelector(".affichage_prix");
+  console.log(prixUpdate);
+  //recuperer les prix du panier
+ for (let i in produitsEnregistres) {
+    produitsEnregistres[i].prix = produitsEnregistres[i].prix * selection;
+    console.log(produitsEnregistres[i].prix);
+  }*/
 }
-//Addition des prix dans le tableau calculPrixTotal avec la methode reduce()
-const reducer = (accumulator, currentValue) => accumulator + currentValue;
-const prixTotal = calculPrixTotal.reduce(reducer, 0);
-console.log(prixTotal);
 
-//afficher le total dans une structure html & creation du bouton
-let affichagePrixTotal = `
-<li id="total" class="list-group-item d-flex justify-content-between">
-<strong>Total</strong>
-<strong>${prixTotal}€</strong>
-</li>`;
-//insertion dans la structure html et en dernière position
-ul.insertAdjacentHTML("beforeend", affichagePrixTotal);
+updateQuantity();
 
 /************recuperation valeurs formulaire pour envoyer dans le LS**********/
+
 //selection et ecouter le bouton "valider le panier"
 const btnValiderPanier = document.querySelector(".btn-block");
 
@@ -242,6 +252,7 @@ btnValiderPanier.addEventListener("click", (e) => {
   document.getElementById("email").value = recupContactObjet.email;
 
   /********envoi des données contact + produistEnregistres au server avec la methode POST ********/
+
   //mettre contact + produitsEnregistrés dans un objet à envoyer au serveur
   const validationFinalPanier = {
     produitsEnregistres,
