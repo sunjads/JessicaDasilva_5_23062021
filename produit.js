@@ -66,25 +66,28 @@ fetch("http://localhost:3000/api/cameras/" + id)
         //création d'une variable pour manipuler le panier
         cart.forEach((element) => {
           if (
-            element.idproduit === data._id &&
+            element.idproduit === id &&
             element.optionproduit === optionselected
           ) {
-            console.log(selectquantite);
-            element.quantite += selectquantite;
+            console.log(cart);
+            element.quantite =
+              parseInt(element.quantite) + parseInt(selectquantite);
             isPresent = true;
           }
-          panier = cart;
         });
+        panier = cart;
       }
+      console.log(panier);
+
       //Ajouter la caméra au panier
       if (isPresent === false) {
         // fonction ajouter un produit selectionné dans le LS
         const ajouterProduit = () => {
           //ajouter de l'objt dans le tableau avec les options choisies par le user
           panier.push(optionsProduit);
-          localStorage.setItem("produit", JSON.stringify(panier));
         };
         ajouterProduit();
       }
+      localStorage.setItem("produit", JSON.stringify(panier));
     });
   });

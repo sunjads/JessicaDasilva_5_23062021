@@ -123,9 +123,8 @@ btnToutSuppPanier.addEventListener("click", (e) => {
     produitsEnregistres[i].prix = produitsEnregistres[i].prix * selection;
     console.log(produitsEnregistres[i].prix);
   }*/
-}
 
-updateQuantity();
+//updateQuantity();
 
 /************recuperation valeurs formulaire pour envoyer dans le LS**********/
 

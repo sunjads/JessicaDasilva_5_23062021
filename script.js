@@ -1,47 +1,39 @@
-// fetch API pour recupérer les données des produits "cameras"
-fetch("http://localhost:3000/api/cameras/")
-  .then((res) => res.json())
-  .then((data) => {
-    //console.log(data);
-    let array = [data[0], data[1], data[2], data[3], data[4]];
-    //console.log(array);
-    output = "";
-    for (infos in array) {
-      // console.log(infos);
-      console.log(array[infos]);
-      output += `
-    <div class="col-12 col-lg-4 mt-5">
-    <div class="card border-white shadow">
-    <img class="card-img-top" src=" ${array[infos].imageUrl}" alt="" />
+// differentes facons de recuperer l'url des id
+
+let id = location.search.substring(4);
+console.log(id);
+
+const queryString = window.location.search;
+console.log(queryString);
+
+getAPI = () => {
+  fetch("http://localhost:3000/api/cameras/")
+    .then((res) => res.json())
+    .then((data) => {
+      output = "";
+      for (let i = 0; i < data.length; i++) {
+        console.log(data[i]._id);
+        // utilisation de template literals pour afficher les données dans une structure html
+        output += `
+    <div class="col-12 col-lg-4 mt-5 mb-2">
+    <div class="card border-white shadow ">
+    
+    <img class="card-img-top" src=" ${data[i].imageUrl}" alt="" />
     <div class="card-body" >
-    <h5 class="card-title">${array[infos].name}</h5>
-    <p class="card-text"> Prix: ${array[infos].price / 100}€</p>
-    <p class="card-text font-italic" >${array[infos].description}</p>
+    <h5 class="card-title font-weight-bold">${data[i].name}</h5>
+    <p class="card-text"> Prix: ${data[i].price / 100}€</p>
+    <p class="card-text" >${data[i].description}</p>
     </div>
-    </div>
-    </div>
-    `;
-
-      document.getElementById("card-container").innerHTML = output;
-    }
-  });
-/*
-// creer une fct qui creer des elements afin de l'inclure dans la boucle
-// de l'array API
-
-//creation les cartes
-function createCards(camera) {
-  let cardContainer = document.createElement("div");
-  cardContainer.setAttribute("class", "col-12 col-md-4");
-  cardContainer.innerHTML = `<div class="card">
-    <img class="card-img-top" src=" ${array[infos].imageUrl}" alt="" />
-    <div class="card-body">
-    <h5 class="card-title">${array[infos].name}</h5>
-    <p class="card-text"> Prix: ${array[infos].price}</p>
-    <p class="card-text">${array[infos].description}</p>
+     <a  href="produit.html?id= ${
+       data[i]._id
+     }" class="button"> Voir le produit </a>
     </div>
     </div>
     `;
-  document.getElementById("row").appendChild(cardContainer);
-}
-*/
+        //url.search property accesses the query string of the URL prefixed with ?:
+        //faire apparaitre les données dans la div card-container
+        document.getElementById("card-container").innerHTML = output;
+      }
+    });
+};
+getAPI();
