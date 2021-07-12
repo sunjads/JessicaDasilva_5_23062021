@@ -1,16 +1,49 @@
-//declaration variable où il y aura la key "produit" et les values du
-//produit convertis en obj JS  dans le LS
-let produitsEnregistres = JSON.parse(localStorage.getItem("produit"));
+let cart = JSON.parse(localStorage.getItem("produit"));
 
 /**************affichage des produits du LS dans le panier***********/
-//selection de la classe ouù il faut injecter le html
+//selection du ul où il faut injecter le html
 let ul = document.querySelector(".list-group");
-
-// creation du tableau afin d'initier la boucle et recuperer les produits du LS
+// creation du tableau afin d'initier une boucle et recuperer les produits du LS
 let output = [];
 
+function afficherCameraDansPanier(i) {
+  //creation de la classe où il faut injecter le html
+  let li = document.createElement("li");
+  // Création des éléments
+  let nom = document.createElement("h6"),
+    option = document.createElement("h6"),
+    prix = document.createElement("p"),
+    input = document.createElement("input"),
+    bouton = document.createElement("button");
+  iconebouton = document.createElement("i");
+
+  // Remplissage des éléments
+  nom.appendChild(document.createTextNode(cart[i].nomproduit));
+  option.appendChild(document.createTextNode(cart[i].optionproduit));
+  prix.appendChild(document.createTextNode(cart[i].prix + " €"));
+  //toLocaleString("en") +
+  li.classList.add("list-group-item", "d-flex", "justify-content-between");
+  nom.classList.add("my-0");
+  option.classList.add("my-0");
+  prix.classList.add("affichage_prix");
+  bouton.classList.add("btn_supprimer_article");
+  iconebouton.classList.add("fas", "fa-times");
+  input.setAttribute("value", cart[i].quantite);
+  input.setAttribute("type", "number");
+  input.classList.add("quantite");
+  input.setAttribute("onchange", "updateQuantity(this.value)");
+  //this.value;
+  //Placement des éléments
+  ul.appendChild(li);
+  li.appendChild(nom);
+  li.appendChild(option);
+  li.appendChild(prix);
+  li.appendChild(input);
+  li.appendChild(bouton);
+  bouton.appendChild(iconebouton);
+}
 // creer une condition pour vérifier si le panier est vide ou non
-if (produitsEnregistres === null || produitsEnregistres == 0) {
+if (cart === null || cart == 0) {
   //si il est vide,inserer la structure html ci-dessus dans le ul
   const panierVide = `
     <div class="container-panier-vide">
@@ -20,27 +53,8 @@ if (produitsEnregistres === null || produitsEnregistres == 0) {
   ul.innerHTML = panierVide;
 } else {
   //sinon, il faut ajouter les produits du LS au ul (le panier)
-  // en faisant une boucle pour recuperer les produits du tableau
-  for (i = 0; i < produitsEnregistres.length; i++) {
-    output =
-      output +
-      `
- <li
-  class="
-    list-group-item
-    d-flex
-    justify-content-between
-    "
->
-  <h6 class="my-0">${produitsEnregistres[i].nomproduit}</h6>
-  <h6 class="my-0">${produitsEnregistres[i].optionproduit}</h6>
-  <p class="affichage_prix">${produitsEnregistres[i].prix}€</p>
-  <input class="quantite" type="number" value="${produitsEnregistres[i].quantite}" min="1" onchange="updateQuantity(this.value)">
-   <button class="btn_supprimer_article">
-  <i class="fas fa-times"></i></button>
-</li>
-`;
-    ul.innerHTML = output;
+  for (i = 0; i < cart.length; i++) {
+    afficherCameraDansPanier(i);
   }
   //afficher le total dans une structure html & creation du bouton
   let affichagePrixTotal = `
@@ -57,8 +71,8 @@ function calculPrixTotal() {
   //integrer les prix dans le panier dans une variable qui est un tableau
   let calculPrixTotal = 0;
   //recuperer les prix du panier
-  for (let i in produitsEnregistres) {
-    calculPrixTotal += produitsEnregistres[i].prix;
+  for (let i in cart) {
+    calculPrixTotal += cart[i].prix;
   }
   localStorage.setItem("prixTotal", calculPrixTotal);
   if (document.querySelector(".affichage_prix") != null) {
@@ -72,19 +86,16 @@ calculPrixTotal();
 
 //recuperer l'icone croix qui servira à supprimer un produit
 let btnsupprimer = document.querySelectorAll(".btn_supprimer_article");
-let li = document.querySelector(".list-group-item");
 
 for (let i = 0; i < btnsupprimer.length; i++) {
   btnsupprimer[i].addEventListener("click", (event) => {
     event.preventDefault();
     // au clique du bouton, affichage de l'id du produit
-    let idasupprimer = produitsEnregistres[i].idproduit;
+    let idasupprimer = cart[i].idproduit;
     //supprimer l'élément cliqué et garder les autres avec la methode filter
-    produitsEnregistres = produitsEnregistres.filter(
-      (element) => element.idproduit !== idasupprimer
-    );
+    cart = cart.filter((element) => element.idproduit !== idasupprimer);
     //envoyer en format JSON dans la key "produit" dans le LS
-    localStorage.setItem("produit", JSON.stringify(produitsEnregistres));
+    localStorage.setItem("produit", JSON.stringify(cart));
     // alert produit supprimé + rechargement de la page
     alert("l'article a bien été supprimé");
     window.location.href = "panier.html";
@@ -92,7 +103,6 @@ for (let i = 0; i < btnsupprimer.length; i++) {
 }
 
 /************* creation du bouton "vider le panier"*************/
-
 //creation du bouton
 let btnToutSuppHtml = `
 <button id="remove_all_button" class="primary" > Vider le panier</button>`;
@@ -113,18 +123,21 @@ btnToutSuppPanier.addEventListener("click", (e) => {
 /**********************modifier la quantité de produits************************/
 //Fonction qui modifie la quantité directement sur la page du panier et mets à jour le prixTotal
 // Le changement de valeur de l'input va lancer la fonction updateQuantity()
-/*function updateQuantity() {
-  let selection = document.querySelector(".quantite").value;
-  console.log(selection);
-  let prixUpdate = document.querySelector(".affichage_prix");
-  console.log(prixUpdate);
-  //recuperer les prix du panier
- for (let i in produitsEnregistres) {
-    produitsEnregistres[i].prix = produitsEnregistres[i].prix * selection;
-    console.log(produitsEnregistres[i].prix);
-  }*/
+function updateQuantity(value) {
+  for (i = 0; i < cart.length; i++) {
+    let selection = document.querySelector(".quantite").value;
+    console.log(selection);
+    let prixUpdate = document.querySelector(".affichage_prix");
+    console.log(prixUpdate);
+    cart[i].quantite = value;
+    cart[i].prix = cart[i].quantite * cart[i].prix;
 
-//updateQuantity();
+    prixUpdate.innerHTML = cart[i].prix;
+    //envoyer en format JSON dans la key "produit" dans le LS
+    localStorage.setItem("produit", JSON.stringify(cart));
+    calculPrixTotal();
+  }
+}
 
 /************recuperation valeurs formulaire pour envoyer dans le LS**********/
 
@@ -144,8 +157,7 @@ btnValiderPanier.addEventListener("click", (e) => {
   };
 
   /********************gestion validation du formulaire************/
-  //fonctions pour initialiser les regex
-  // texte d'alerte
+  //fonctions pour initialiser les regex + textes d'alerte
   const textAlert = (value) => {
     return ` ${value} : les chiffres ou symboles ne sont pas autorisés.\n Minimum 3 caractères, ne pas dépasser 20.`;
   };
@@ -254,7 +266,7 @@ btnValiderPanier.addEventListener("click", (e) => {
 
   //mettre contact + produitsEnregistrés dans un objet à envoyer au serveur
   const validationFinalPanier = {
-    produitsEnregistres,
+    produitsEnregistres: cart,
     contact,
   };
   EnvoieServer(validationFinalPanier);

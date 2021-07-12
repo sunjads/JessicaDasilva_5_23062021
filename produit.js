@@ -3,7 +3,6 @@ const produit = document.getElementById("card-container");
 let params = new URL(document.location).searchParams;
 //url.search property accesses the query string of the URL prefixed with ?:
 let id = location.search.substring(7);
-console.log(id);
 
 function afficherCamera(data) {
   // Création des éléments
@@ -16,9 +15,7 @@ function afficherCamera(data) {
   // Remplissage des éléments
   name.appendChild(document.createTextNode(data.name));
   image.src = data.imageUrl;
-  price.appendChild(
-    document.createTextNode((data.price / 100).toLocaleString("en") + " €")
-  );
+  price.appendChild(document.createTextNode(data.price / 100 + " €"));
   text.appendChild(document.createTextNode(data.description));
   for (i = 0; i < data.lenses.length; i++) {
     let option = document.createElement("option");
@@ -37,10 +34,9 @@ fetch("http://localhost:3000/api/cameras/" + id)
     addbutton.addEventListener("click", (e) => {
       e.preventDefault();
 
-      // recuperer le choix de la selection d'options du produit dans une variable
+      // recuperer le choix de la selection d'options du produit stocké dans une variable
       let selection = document.querySelector("select");
       const optionselected = selection.options[selection.selectedIndex].value;
-      console.log(optionselected);
       // selection de la quantité de produit
       const quantite = document.querySelector(".quantite");
       const selectquantite = quantite.value;
@@ -56,7 +52,7 @@ fetch("http://localhost:3000/api/cameras/" + id)
       };
 
       //local storage
-      /*avant d'envoyer des donnees, il faut verifier si il y en a pas deja*/
+      /*avant d'envoyer des donnees, il faut verifier si il y en a pas deja dans le LS*/
       let isPresent = false;
       let panier = [];
 
@@ -81,13 +77,16 @@ fetch("http://localhost:3000/api/cameras/" + id)
 
       //Ajouter la caméra au panier
       if (isPresent === false) {
-        // fonction ajouter un produit selectionné dans le LS
-        const ajouterProduit = () => {
-          //ajouter de l'objt dans le tableau avec les options choisies par le user
-          panier.push(optionsProduit);
-        };
-        ajouterProduit();
+        //ajout de l'objt dans le tableau avec les options choisies par le user
+        panier.push(optionsProduit);
       }
+      // ajouter un produit selectionné dans le LS
       localStorage.setItem("produit", JSON.stringify(panier));
     });
   });
+
+/*OPITON PRODUIT ET TITRE
+      white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;*/
