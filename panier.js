@@ -16,23 +16,21 @@ function afficherCameraDansPanier(i) {
     input = document.createElement("input"),
     bouton = document.createElement("button");
   iconebouton = document.createElement("i");
-
   // Remplissage des éléments
   nom.appendChild(document.createTextNode(cart[i].nomproduit));
   option.appendChild(document.createTextNode(cart[i].optionproduit));
   prix.appendChild(document.createTextNode(cart[i].prix + " €"));
-  //toLocaleString("en") +
   li.classList.add("list-group-item", "d-flex", "justify-content-between");
   nom.classList.add("my-0");
-  option.classList.add("my-0");
+  option.classList.add("my-0", "option");
   prix.classList.add("affichage_prix");
   bouton.classList.add("btn_supprimer_article");
   iconebouton.classList.add("fas", "fa-times");
   input.setAttribute("value", cart[i].quantite);
   input.setAttribute("type", "number");
+  input.setAttribute("min", "1");
   input.classList.add("quantite");
   input.setAttribute("onchange", "updateQuantity(this.value)");
-  //this.value;
   //Placement des éléments
   ul.appendChild(li);
   li.appendChild(nom);
@@ -64,17 +62,41 @@ if (cart === null || cart == 0) {
   ul.insertAdjacentHTML("beforeend", affichagePrixTotal);
 }
 
-/***************** calcul du prix total ***************/
+/**********************modifier la quantité de produits************************/
+// Le changement de valeur de l'input va lancer la fonction updateQuantity()
+function updateQuantity(value) {
+  for (i = 0; i < cart.length; i++) {
+    let input = document.querySelector(".quantite").value;
+    console.log(input);
+    let h6 = document.querySelector(".my-0").innerHTML;
+    let optionchoisie = document.querySelector(".option");
+    console.log(h6);
+    console.log(optionchoisie);
+    if (cart[i].nomproduit === h6 && cart[i].optionproduit === optionchoisie) {
+      console.log(input);
+      let prixUpdate = document.querySelector(".affichage_prix");
+      cart[i].quantite = value;
+      prixUpdate.innerHTML = cart[i].prix * cart[i].quantite + "€";
+      console.log(prixUpdate.innerHTML);
+      //envoyer en format JSON dans la key "produit" dans le LS
+      localStorage.setItem("produit", JSON.stringify(cart));
+      calculPrixTotal();
+    }
+    return;
+  }
+}
 
+/***************** calcul du prix total ***************/
 //Fonction pour créer un prixTotal afin de l'utiliser pour afficher le prix total plus facillement dans la panier
 function calculPrixTotal() {
   //integrer les prix dans le panier dans une variable qui est un tableau
   let calculPrixTotal = 0;
   //recuperer les prix du panier
   for (let i in cart) {
-    calculPrixTotal += cart[i].prix;
+    // cart[i].prix = cart[i].quantite * cart[i].prix;
+    calculPrixTotal += cart[i].prix * cart[i].quantite;
   }
-  localStorage.setItem("prixTotal", calculPrixTotal);
+
   if (document.querySelector(".affichage_prix") != null) {
     document.getElementById("total").innerHTML = `<strong>Total</strong>
 <strong>${calculPrixTotal} €</strong>`;
@@ -83,7 +105,6 @@ function calculPrixTotal() {
 calculPrixTotal();
 
 /**********************supprimer produits********************/
-
 //recuperer l'icone croix qui servira à supprimer un produit
 let btnsupprimer = document.querySelectorAll(".btn_supprimer_article");
 
@@ -96,7 +117,6 @@ for (let i = 0; i < btnsupprimer.length; i++) {
     cart = cart.filter((element) => element.idproduit !== idasupprimer);
     //envoyer en format JSON dans la key "produit" dans le LS
     localStorage.setItem("produit", JSON.stringify(cart));
-    // alert produit supprimé + rechargement de la page
     alert("l'article a bien été supprimé");
     window.location.href = "panier.html";
   });
@@ -106,7 +126,6 @@ for (let i = 0; i < btnsupprimer.length; i++) {
 //creation du bouton
 let btnToutSuppHtml = `
 <button id="remove_all_button" class="primary" > Vider le panier</button>`;
-//insertion dans la structure html
 ul.insertAdjacentHTML("beforeend", btnToutSuppHtml);
 //recuperation du bouton
 let btnToutSuppPanier = document.getElementById("remove_all_button");
@@ -116,34 +135,12 @@ btnToutSuppPanier.addEventListener("click", (e) => {
   //vider le panier
   localStorage.removeItem("produit");
   alert("le panier a été vidé");
-  //redirection de la page
   window.location.href = "panier.html";
 });
 
-/**********************modifier la quantité de produits************************/
-//Fonction qui modifie la quantité directement sur la page du panier et mets à jour le prixTotal
-// Le changement de valeur de l'input va lancer la fonction updateQuantity()
-function updateQuantity(value) {
-  for (i = 0; i < cart.length; i++) {
-    let selection = document.querySelector(".quantite").value;
-    console.log(selection);
-    let prixUpdate = document.querySelector(".affichage_prix");
-    console.log(prixUpdate);
-    cart[i].quantite = value;
-    cart[i].prix = cart[i].quantite * cart[i].prix;
-
-    prixUpdate.innerHTML = cart[i].prix;
-    //envoyer en format JSON dans la key "produit" dans le LS
-    localStorage.setItem("produit", JSON.stringify(cart));
-    calculPrixTotal();
-  }
-}
-
 /************recuperation valeurs formulaire pour envoyer dans le LS**********/
-
 //selection et ecouter le bouton "valider le panier"
 const btnValiderPanier = document.querySelector(".btn-block");
-
 // ecouter l'évènement clique du bouton
 btnValiderPanier.addEventListener("click", (e) => {
   e.preventDefault();
@@ -238,7 +235,6 @@ btnValiderPanier.addEventListener("click", (e) => {
       return false;
     }
   }
-
   //envoyer l'objet contact au LS si c'est ok, sinon non
   if (
     ValidFirstName() &&
@@ -257,23 +253,19 @@ btnValiderPanier.addEventListener("click", (e) => {
   const recupContactObjet = JSON.parse(recupContact);
   // remettre les values contact du LS dans les champs du formulaire
   document.getElementById("lastName").value = recupContactObjet.lastName;
-  document.getElementById("firstName").value = recupContactObjet.firtsName;
+  document.getElementById("firstName").value = recupContactObjet.firstName;
   document.getElementById("address").value = recupContactObjet.address;
   document.getElementById("city").value = recupContactObjet.city;
   document.getElementById("email").value = recupContactObjet.email;
 
   /********envoi des données contact + produistEnregistres au server avec la methode POST ********/
-
-  //mettre contact + produitsEnregistrés dans un objet à envoyer au serveur
+  //mettre contact + panier dans un objet à envoyer au serveur
   const validationFinalPanier = {
-    produitsEnregistres: cart,
+    cart,
     contact,
   };
-  EnvoieServer(validationFinalPanier);
-});
 
-//envoyer l'objet avec fetch et method POST
-function EnvoieServer(validationFinalPanier) {
+  //envoyer l'objet avec fetch et method POST
   fetch("http://localhost:3000/api/cameras/order", {
     method: "POST",
     body: JSON.stringify(validationFinalPanier),
@@ -286,4 +278,4 @@ function EnvoieServer(validationFinalPanier) {
     .then((res) => {
       console.log(res);
     });
-}
+});
