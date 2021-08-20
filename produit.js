@@ -1,6 +1,7 @@
 const produit = document.getElementById("card-container");
 //recuperation des URLs des objets
 let params = new URL(document.location).searchParams;
+console.log(params);
 //url.search property accesses the query string of the URL prefixed with ?:
 let id = location.search.substring(7);
 

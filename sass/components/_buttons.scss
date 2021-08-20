@@ -76,6 +76,8 @@
   & .fas {
     font-size: 18px;
     color: orangered;
+    //pour ne plus cliquer sur l'icone mais le bouton
+    pointer-events: none;
   }
 }
 

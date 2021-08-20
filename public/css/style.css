@@ -10020,9 +10020,14 @@ h3 {
 }
 
 #total {
+  display: flex;
+  justify-content: flex-end;
   margin-top: 30px;
   border: none;
   border-top: #616060 2px solid;
+}
+#total strong {
+  padding: 10px 10px;
 }
 
 .my-0 {
@@ -10162,6 +10167,7 @@ body {
 .btn_supprimer_article .fas {
   font-size: 18px;
   color: orangered;
+  pointer-events: none;
 }
 
 .btn-lg, .btn-group-lg > .btn {

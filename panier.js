@@ -26,11 +26,10 @@ function afficherCameraDansPanier(i) {
   prix.classList.add("affichage_prix");
   bouton.classList.add("btn_supprimer_article");
   iconebouton.classList.add("fas", "fa-times");
+  input.classList.add("quantite");
   input.setAttribute("value", cart[i].quantite);
   input.setAttribute("type", "number");
   input.setAttribute("min", "1");
-  input.classList.add("quantite");
-  input.setAttribute("onchange", "updateQuantity(this.value)");
   //Placement des éléments
   ul.appendChild(li);
   li.appendChild(nom);
@@ -56,33 +55,61 @@ if (cart === null || cart == 0) {
   }
   //afficher le total dans une structure html & creation du bouton
   let affichagePrixTotal = `
-<li id="total" class="list-group-item d-flex justify-content-between">
-</li>`;
+<div id="total">
+</div>`;
   //insertion dans la structure html et en dernière position
-  ul.insertAdjacentHTML("beforeend", affichagePrixTotal);
+  ul.insertAdjacentHTML("afterend", affichagePrixTotal);
 }
 
 /**********************modifier la quantité de produits************************/
 // Le changement de valeur de l'input va lancer la fonction updateQuantity()
-function updateQuantity(value) {
-  for (i = 0; i < cart.length; i++) {
-    let input = document.querySelector(".quantite").value;
-    console.log(input);
-    let h6 = document.querySelector(".my-0").innerHTML;
-    let optionchoisie = document.querySelector(".option");
-    console.log(h6);
-    console.log(optionchoisie);
-    if (cart[i].nomproduit === h6 && cart[i].optionproduit === optionchoisie) {
-      console.log(input);
-      let prixUpdate = document.querySelector(".affichage_prix");
-      cart[i].quantite = value;
-      prixUpdate.innerHTML = cart[i].prix * cart[i].quantite + "€";
-      console.log(prixUpdate.innerHTML);
-      //envoyer en format JSON dans la key "produit" dans le LS
-      localStorage.setItem("produit", JSON.stringify(cart));
-      calculPrixTotal();
+let li = document.querySelectorAll(".list-group-item");
+//console.log(li);
+
+for (let i = 0; i < li.length; i++) {
+  //console.log(li.length);
+  var liiterate = li[i];
+  //console.log(liiterate);
+  liiterate.addEventListener("change", updateQuantity);
+}
+function updateQuantity(event) {
+  //recuperer le container de li, getElementByClassName renvoie un array,
+  //on veut recuperer le premier element
+  let licontainer = document.getElementsByClassName("list-group")[0];
+  //recuperer les li avec cette classe "list-group-item" dans le ul
+  let cartRows = licontainer.getElementsByClassName("list-group-item");
+  for (let i = 0; i < cartRows.length; i++) {
+    let cartRow = cartRows[i];
+    console.log(cartRow);
+    let prixElement =
+      cartRow.getElementsByClassName("affichage_prix")[0].innerText;
+    let quantiteElement = cartRow.getElementsByClassName("quantite")[0];
+    let nomElement = cartRow.getElementsByClassName("my-0")[0].innerText;
+    let optionElement = cartRow.getElementsByClassName("option")[0].innerText;
+
+    //transformer le prix en string en nombre sans le symbole €
+    //let prix = parseFloat(prixElement.innerText.replace("€", ""));
+
+    let quantite = quantiteElement.value;
+    console.log(quantite);
+
+    if (
+      cart[i].optionproduit == optionElement &&
+      cart[i].nomproduit == nomElement
+    ) {
+      console.log("ok");
+      cart[i].quantite = quantite;
+      console.log(cart[i].quantite);
     }
-    return;
+    if (
+      cart[i].optionproduit !== optionElement &&
+      cart[i].nomproduit !== nomElement
+    ) {
+      console.log("not ok");
+    }
+    //envoyer en format JSON dans la key "produit" dans le LS
+    localStorage.setItem("produit", JSON.stringify(cart));
+    calculPrixTotal();
   }
 }
 
@@ -96,7 +123,6 @@ function calculPrixTotal() {
     // cart[i].prix = cart[i].quantite * cart[i].prix;
     calculPrixTotal += cart[i].prix * cart[i].quantite;
   }
-
   if (document.querySelector(".affichage_prix") != null) {
     document.getElementById("total").innerHTML = `<strong>Total</strong>
 <strong>${calculPrixTotal} €</strong>`;
@@ -112,9 +138,16 @@ for (let i = 0; i < btnsupprimer.length; i++) {
   btnsupprimer[i].addEventListener("click", (event) => {
     event.preventDefault();
     // au clique du bouton, affichage de l'id du produit
-    let idasupprimer = cart[i].idproduit;
+    let nomasupprimer = cart[i].nomproduit;
+    let optionasupprimer = cart[i].optionproduit;
+    //console.log(idasupprimer, optionasupprimer);
     //supprimer l'élément cliqué et garder les autres avec la methode filter
-    cart = cart.filter((element) => element.idproduit !== idasupprimer);
+    cart = cart.filter(
+      (element) =>
+        element.optionproduit !== optionasupprimer &&
+        element.idproduit !== nomasupprimer
+    );
+
     //envoyer en format JSON dans la key "produit" dans le LS
     localStorage.setItem("produit", JSON.stringify(cart));
     alert("l'article a bien été supprimé");
