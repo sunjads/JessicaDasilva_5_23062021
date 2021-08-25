@@ -58,7 +58,7 @@ if (cart === null || cart == 0) {
 <div id="total">
 </div>`;
   //insertion dans la structure html et en dernière position
-  ul.insertAdjacentHTML("afterend", affichagePrixTotal);
+  ul.insertAdjacentHTML("beforeend", affichagePrixTotal);
 }
 
 /**********************modifier la quantité de produits************************/
@@ -72,7 +72,7 @@ for (let i = 0; i < li.length; i++) {
   //console.log(liiterate);
   liiterate.addEventListener("change", updateQuantity);
 }
-function updateQuantity(event) {
+function updateQuantity() {
   //recuperer le container de li, getElementByClassName renvoie un array,
   //on veut recuperer le premier element
   let licontainer = document.getElementsByClassName("list-group")[0];

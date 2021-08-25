@@ -25,10 +25,11 @@
   border: none;
   color: black;
   background-color: #f79a59;
-  border-radius: 4px;
+  border-radius: 30px;
   box-shadow: insert 0 0 0 0 #9d63d6;
   transition: ease-out 0.3s;
   font-size: 1rem;
+  font-weight: bolder;
   outline: none;
   &:hover {
     box-shadow: inset 250px 0 0 0 #9d63d6;
@@ -39,20 +40,14 @@
     font-weight: bold;
   }
 }
-//bouton valider le panier
-.needs-validation .btn {
-  width: 100%;
-  border: black 1px solid;
-  height: 50px;
-  font-size: 1rem;
-  margin: auto;
-}
-//bouton tout supprimer
+
+//bouton vider le panier
 #remove_all_button {
   background-color: #f79a59;
-  border-radius: 4px;
+  color: white;
+  border-radius: 30px;
   border: none;
-  width: 100%;
+  width: 250px;
   height: 50px;
   margin: auto;
   margin-top: 15px;
@@ -61,7 +56,7 @@
   outline: none;
   &:hover {
     background-color: #9d63d6;
-    color: white;
+    font-weight: bolder;
     cursor: pointer;
   }
   &:active {
@@ -81,24 +76,20 @@
   }
 }
 
-//bouton valider la commande
-.btn-lg {
-  border: black 1px solid;
-}
-
 // bouton voir le produit
 .button {
   padding: 15px 15px;
 
   display: inline-block;
   text-align: center;
-  width: 80%;
+  width: 250px;
   margin: auto;
   margin-bottom: 20px;
   background: #ffc8a1;
   border: none;
   color: black;
-  border-radius: 5px;
+  font-weight: bolder;
+  border-radius: 30px;
   transition: ease-out 0.2s;
   &:hover {
     background: #9d63d6;
@@ -106,10 +97,66 @@
     text-decoration: none;
   }
 }
+//bouton valider la commande
+#validation-commande {
+  position: relative;
+  width: 250px;
+  height: 60px;
+  margin: auto;
+  margin-top: 15px;
+  font-size: 1.2em;
+  color: white;
+  font-weight: bolder;
+  border: none;
+  z-index: 1;
+  background: linear-gradient(90deg, #f79a59, #9d63d6, #e67a8e, #f79a59);
+  background-size: 400%;
+  border-radius: 30px;
+  &:hover {
+    animation: animate 8s linear infinite;
+  }
+  @keyframes animate {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 400%;
+    }
+  }
+}
+#validation-commande:before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  z-index: -1;
+  background: linear-gradient(90deg, #f79a59, #9d63d6, #905bfd #f79a59);
+  background-size: 400%;
+  border-radius: 40px;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+#validation-commande:hover:before {
+  filter: blur(20px);
+  opacity: 1;
+  animation: animate 8s linear infinite;
+}
 @media screen and (min-width: 320px) and (max-width: 425px) {
   .nav-link > img {
     color: red;
     width: 16px;
     height: 15px;
+  }
+
+  .button {
+    width: 200px;
+  }
+}
+@media screen and (min-width: 460px) and (max-width: 991px) {
+  .button {
+    width: 200px;
   }
 }

@@ -21,7 +21,7 @@ getAPI = () => {
     <img class="card-img-top" src=" ${data[i].imageUrl}" alt="" />
     <div class="card-body" >
     <h5 class="card-title font-weight-bold">${data[i].name}</h5>
-    <p class="card-text"> Prix: ${data[i].price / 100}€</p>
+    <p class="card-text"> Prix : ${data[i].price / 100}€</p>
     <p class="card-text" >${data[i].description}</p>
     </div>
      <a  href="produit.html?id= ${
