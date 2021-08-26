@@ -29,6 +29,10 @@
   border: rgb(223, 222, 222) 1px solid;
   border-radius: 2px;
   width: 15%;
+  &:focus {
+    font-weight: bolder;
+    outline: none;
+  }
 }
 
 #invalid-feedback-lastName,

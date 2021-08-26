@@ -10044,6 +10044,10 @@ h3 {
   border-radius: 2px;
   width: 15%;
 }
+.list-group-item .quantite:focus {
+  font-weight: bolder;
+  outline: none;
+}
 
 #invalid-feedback-lastName,
 #invalid-feedback-firstName,
@@ -10099,6 +10103,41 @@ body {
   font-weight: bolder;
 }
 
+.button {
+  padding: 15px 15px;
+  display: inline-block;
+  text-align: center;
+  width: 250px;
+  margin: auto;
+  margin-bottom: 20px;
+  background: #ffc8a1;
+  border: none;
+  color: black;
+  font-weight: bolder;
+  border-radius: 30px;
+  transition: ease-out 0.2s;
+}
+.button:hover {
+  background: #9d63d6;
+  color: white;
+  text-decoration: none;
+}
+
+.button:active {
+  animation: agrandir 0.3s linear;
+}
+
+@keyframes agrandir {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 .container_quantite {
   padding-top: 5px;
   width: 30vw;
@@ -10119,6 +10158,7 @@ body {
 }
 
 #add-button {
+  position: relative;
   margin-top: 10px;
   width: 250px;
   height: 50px;
@@ -10137,10 +10177,65 @@ body {
   color: white;
   cursor: pointer;
 }
-#add-button:active {
-  font-weight: bold;
+
+#add-button span {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 50%;
+  font-size: 1em;
+  color: #fff;
+  transform: translate(-50%, -50%);
 }
 
+.add-to-cart {
+  opacity: 1;
+}
+
+.added {
+  opacity: 0;
+}
+
+#add-button.clicked span.add-to-cart {
+  animation: txt1 0.5s ease-in-out forwards;
+}
+
+#add-button.clicked span.added {
+  animation: txt2 0.5s ease-in-out forwards;
+}
+
+@keyframes txt1 {
+  0% {
+    opacity: 1;
+  }
+  20%, 100% {
+    opacity: 0;
+  }
+}
+@keyframes txt2 {
+  0%, 80% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.selected {
+  color: #905bfd;
+  animation: agrandir 0.3s linear;
+}
+
+@keyframes agrandir {
+  0% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 #remove_all_button {
   background-color: #f79a59;
   color: white;
@@ -10174,26 +10269,6 @@ body {
   pointer-events: none;
 }
 
-.button {
-  padding: 15px 15px;
-  display: inline-block;
-  text-align: center;
-  width: 250px;
-  margin: auto;
-  margin-bottom: 20px;
-  background: #ffc8a1;
-  border: none;
-  color: black;
-  font-weight: bolder;
-  border-radius: 30px;
-  transition: ease-out 0.2s;
-}
-.button:hover {
-  background: #9d63d6;
-  color: white;
-  text-decoration: none;
-}
-
 #validation-commande {
   position: relative;
   width: 250px;
@@ -10210,7 +10285,7 @@ body {
   border-radius: 30px;
 }
 #validation-commande:hover {
-  animation: animate 8s linear infinite;
+  animation: animate 3s linear infinite;
 }
 @keyframes animate {
   0% {
@@ -10221,6 +10296,26 @@ body {
   }
 }
 
+#validation-commande:focus {
+  box-shadow: none;
+}
+
+#validation-commande:active {
+  box-shadow: none;
+  animation: agrandir 0.5s ease-in-out;
+}
+
+@keyframes agrandir {
+  0% {
+    transform: scale(1);
+  }
+  50%, 70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 #validation-commande:before {
   content: "";
   position: absolute;
@@ -10229,7 +10324,7 @@ body {
   right: -5px;
   bottom: -5px;
   z-index: -1;
-  background: linear-gradient(90deg, #f79a59, #9d63d6, #905bfd #f79a59);
+  background: linear-gradient(90deg, #f79a59, #9d63d6, #905bfd, #f79a59);
   background-size: 400%;
   border-radius: 40px;
   opacity: 0;

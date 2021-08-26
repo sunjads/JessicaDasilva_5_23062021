@@ -24,6 +24,23 @@ function afficherCamera(data) {
     selectLenses.appendChild(option);
   }
 }
+//au clique "ajouter panier",modifie le bouton et icone panier
+function iconeChanged() {
+  let icone = document.querySelector(".fa-shopping-cart");
+  console.log(icone);
+  icone.classList.toggle("selected");
+  if (icone.classList.contains("selected")) {
+    setTimeout(iconeChanged, 500);
+  }
+}
+function boutonModifie() {
+  const addbutton = document.getElementById("add-button");
+  addbutton.classList.toggle("clicked");
+  if (addbutton.classList.contains("clicked")) {
+    setTimeout(boutonModifie, 1500);
+  }
+}
+
 /************appel de l'API avec la methode FETCH avec le parametre ID **********/
 fetch("http://localhost:3000/api/cameras/" + id)
   .then((res) => res.json())
@@ -35,6 +52,9 @@ fetch("http://localhost:3000/api/cameras/" + id)
     addbutton.addEventListener("click", (e) => {
       e.preventDefault();
 
+      //modifier l'icone panier et le bouton pour signaler l'ajout produit
+      boutonModifie();
+      iconeChanged();
       // recuperer le choix de la selection d'options du produit stocké dans une variable
       let selection = document.querySelector("select");
       const optionselected = selection.options[selection.selectedIndex].value;
