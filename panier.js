@@ -126,6 +126,8 @@ function calculPrixTotal() {
   if (document.querySelector(".affichage_prix") != null) {
     document.getElementById("total").innerHTML = `<strong>Total</strong>
 <strong>${calculPrixTotal} €</strong>`;
+    console.log(calculPrixTotal);
+    localStorage.setItem("prixTotal", JSON.stringify(calculPrixTotal));
   }
 }
 calculPrixTotal();
@@ -292,23 +294,39 @@ btnValiderPanier.addEventListener("click", (e) => {
   document.getElementById("email").value = recupContactObjet.email;
 
   /********envoi des données contact + produistEnregistres au server avec la methode POST ********/
-  //mettre contact + panier dans un objet à envoyer au serveur
-  const validationFinalPanier = {
-    cart,
-    contact,
-  };
 
-  //envoyer l'objet avec fetch et method POST
+  let products = [];
+  console.log(cart);
+  for (let i of cart) {
+    let productId = i.idproduit;
+    console.log(productId);
+    products.push(productId);
+  }
+  console.log(products);
+  //mettre contact + panier dans un objet à envoyer au serveur
+  const commande = {
+    contact,
+    products,
+  };
+  console.log(commande);
+
+  //envoyer l'objet avec fetch et method POST et recuperer l'orderID
   fetch("http://localhost:3000/api/cameras/order", {
     method: "POST",
-    body: JSON.stringify(validationFinalPanier),
     headers: {
       //pour prevenir le server qu'il va recevoir du JSON avec les headers
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(commande),
   })
     .then((res) => res.json())
-    .then((res) => {
-      console.log(res);
+
+    .then((order) => {
+      localStorage.setItem("orderId", order.orderId);
+      localStorage.setItem("firstName", contact.firstName);
+      window.location.href = "confirmation.html";
     });
+  // .catch((error) => console.log(error));
 });
+
+// + recuperer le prix total pour l'afficher sur confirmation

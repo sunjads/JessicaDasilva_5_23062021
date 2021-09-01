@@ -10132,7 +10132,7 @@ body {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.1);
+    transform: scale(0.8);
   }
   100% {
     transform: scale(1);
@@ -10227,10 +10227,10 @@ body {
 
 @keyframes agrandir {
   0% {
-    transform: scale(1.2);
+    transform: scale(1);
   }
   50% {
-    transform: scale(1.4);
+    transform: scale(0.7);
   }
   100% {
     transform: scale(1);
@@ -10310,7 +10310,7 @@ body {
     transform: scale(1);
   }
   50%, 70% {
-    transform: scale(1.1);
+    transform: scale(0.9);
   }
   100% {
     transform: scale(1);
