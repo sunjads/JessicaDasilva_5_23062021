@@ -30,6 +30,11 @@ function afficherCameraDansPanier(i) {
   input.setAttribute("value", cart[i].quantite);
   input.setAttribute("type", "number");
   input.setAttribute("min", "1");
+  input.setAttribute(
+    "onkeypress",
+    "return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57"
+  );
+
   //Placement des éléments
   ul.appendChild(li);
   li.appendChild(nom);
@@ -77,6 +82,7 @@ function updateQuantity() {
   let licontainer = document.getElementsByClassName("list-group")[0];
   //recuperer les li avec cette classe "list-group-item" dans le ul
   let cartRows = licontainer.getElementsByClassName("list-group-item");
+
   for (let i = 0; i < cartRows.length; i++) {
     let cartRow = cartRows[i];
     let quantiteElement = cartRow.getElementsByClassName("quantite")[0];
@@ -90,6 +96,13 @@ function updateQuantity() {
     ) {
       cart[i].quantite = quantite;
     }
+
+    if (cart[i].quantite < 0) {
+      console.log("la quantite est inferieure à 0");
+    }
+    /*if (cart[i].quantite < 0 && cart[i].quantite === null) {
+      console.log("la qauntite est null ou inferieur à zero");
+    }*/
     //envoyer en format JSON dans la key "produit" dans le LS
     localStorage.setItem("produit", JSON.stringify(cart));
     calculPrixTotal();
@@ -102,7 +115,6 @@ function calculPrixTotal() {
   //recuperer les prix du panier
   for (let i in cart) {
     calculPrixTotal += cart[i].prix * cart[i].quantite;
-    console.log(calculPrixTotal, cart[i].prix, cart[i].quantite);
   }
   if (document.querySelector(".affichage_prix") != null) {
     document.getElementById("total").innerHTML = `<strong>Total</strong>
@@ -172,14 +184,14 @@ function validationFinale() {
     };
     //fonctions pour initialiser les textes d'alerte + les regex
     const textAlert = (value) => {
-      return ` ${value} : les chiffres ou symboles ne sont pas autorisés.\n Minimum 3 caractères, ne pas dépasser 20.`;
+      return ` ${value} : les chiffres ou symboles ne sont pas autorisés.\n Minimum 2 caractères, ne pas dépasser 20.`;
     };
     // regex pour le prénom,nom,et la ville
     const regexEmail = (value) => {
       return /^([\w\-\.]+)@((?:[\w]+\.)+)([a-zA-Z]{2,4})/i.test(value);
     };
     const regexTest = (value) => {
-      return /^([A-Za-z0-9_\s\-'\u00C0-\u024F]){3,20}$/.test(value);
+      return /^([A-Za-z0-9_\s\-'\u00C0-\u024F]){2,20}$/.test(value);
     };
     //controle de validité du prénom
     function ValidFirstName() {
@@ -299,7 +311,6 @@ function validationFinale() {
           window.location.href = "confirmation.html";
         })
         .catch(function (error) {
-          console.log(error);
           document.getElementById("erreur").innerHTML =
             "<strong>Erreur de chargement</strong>";
         });
