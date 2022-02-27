@@ -1,3 +1,4 @@
+const container = document.getElementById("card-container");
 //fonction pour afficher les données de l'API dans une structure html
 getAPI = () => {
   fetch("http://localhost:3000/api/cameras/")
@@ -24,7 +25,7 @@ getAPI = () => {
     `;
 
         //faire apparaitre les données dans la div card-container
-        document.getElementById("card-container").innerHTML = output;
+        container.innerHTML = output;
       }
     })
     //faire afficher un message d'erreur s'il y a un problème

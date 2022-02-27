@@ -39,35 +39,6 @@ function boutonModifie() {
     setTimeout(boutonModifie, 1500);
   }
 }
-//LOCAL STORAGE
-/*avant d'envoyer des donnees, il faut verifier si il y en a pas deja dans le LS*/
-function Verification() {
-  let isPresent = false;
-  let panier = [];
-  if (JSON.parse(localStorage.getItem("produit"))) {
-    //convertir donnees au format JSON qui sont dans le LS en obj JS
-    let cart = JSON.parse(localStorage.getItem("produit"));
-    //création d'une variable pour manipuler le panier
-    cart.forEach((element) => {
-      if (
-        element.idproduit === id &&
-        element.optionproduit === optionselected
-      ) {
-        element.quantite =
-          parseInt(element.quantite) + parseInt(selectquantite);
-        isPresent = true;
-      }
-    });
-    panier = cart;
-  }
-  //Ajouter la caméra au panier
-  if (isPresent === false) {
-    //ajout de l'objt dans le tableau avec les options choisies par le user
-    panier.push(optionsProduit);
-  }
-  // ajouter un produit selectionné dans le LS
-  localStorage.setItem("produit", JSON.stringify(panier));
-}
 
 /************appel de l'API avec la methode FETCH avec le parametre ID **********/
 getID = () => {
@@ -97,6 +68,35 @@ getID = () => {
           prix: (data.price * quantite.value) / 100,
           quantite: selectquantite,
         };
+        //LOCAL STORAGE
+        /*avant d'envoyer des donnees, il faut verifier si il y en a pas deja dans le LS*/
+        function Verification() {
+          let isPresent = false;
+          let panier = [];
+          if (JSON.parse(localStorage.getItem("produit"))) {
+            //convertir donnees au format JSON qui sont dans le LS en obj JS
+            let cart = JSON.parse(localStorage.getItem("produit"));
+            //création d'une variable pour manipuler le panier
+            cart.forEach((element) => {
+              if (
+                element.idproduit === id &&
+                element.optionproduit === optionselected
+              ) {
+                element.quantite =
+                  parseInt(element.quantite) + parseInt(selectquantite);
+                isPresent = true;
+              }
+            });
+            panier = cart;
+          }
+          //Ajouter la caméra au panier
+          if (isPresent === false) {
+            //ajout de l'objt dans le tableau avec les options choisies par le user
+            panier.push(optionsProduit);
+          }
+          // ajouter un produit selectionné dans le LS
+          localStorage.setItem("produit", JSON.stringify(panier));
+        }
         Verification();
       });
     });
